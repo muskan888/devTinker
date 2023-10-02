@@ -20,23 +20,37 @@ const Login = (props) => {
         setUserEnteredInfo({ ...userEnteredInfo, [name]: value });
     };
     
-    const findUser = (e) => {
-        e.preventDefault();
+    // const findUser = (e) => {
+    //     e.preventDefault();
     
-        axios.get(`http://localhost:8070/user/get/${userEnteredInfo.user_name}`)
-            .then((response) => {
-                setData(response.data.user);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    //     axios.get(`http://localhost:8070/user/get/${userEnteredInfo.user_name}`)
+    //         .then((response) => {
+    //             setData(response.data.user);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //         });
 
-        if(userEnteredInfo.password === data.password){
-            props.login(data._id);
-            props.history.push(`/profile/home/${data._id}`);
-        }else {
+    //     if(userEnteredInfo.password === data.password){
+    //         props.login(data._id);
+    //         props.history.push(`/profile/home/${data._id}`);
+    //     }else {
+    //         alert("Username or password is wrong. Try Again!")
+    //     }
+    // }
+
+    const login=async(e)=>{
+        e.preventDefault();
+        await axios.post("http://127.0.0.1:8000/login",{username:userEnteredInfo.user_name,password:userEnteredInfo.password})
+        .then((response)=>{
+            // console.log(response.data);
+            let username=response.data.user.username;
+            props.login(username);
+            props.history.push(`/profile/home/${response.data.user.username}`);
+        }).catch((err)=>{
             alert("Username or password is wrong. Try Again!")
-        }
+        })
+        
     }
 
     return (
@@ -64,13 +78,17 @@ const Login = (props) => {
                             <label className="form-check-label" for="form1Example3" style={{marginLeft: "10px", color: "#585555"}}> Remember password </label>
                         </div>
 
-                        <Link className={styles.btn_login} style={{marginTop: "15px", width: "fit-content"}} type="submit" onClick={findUser}>Login</Link>
+                        <Link className={styles.btn_login} style={{marginTop: "15px", width: "fit-content"}} type="submit" onClick={login}>Login</Link>
 
                         <hr className="my-4" style={{opacity: "0.15"}}/>
 
                         <div class="d-flex align-items-center justify-content-center pb-4">
                             <p class="mb-0 me-2">Don't have an account?</p>
                             <Link to={"/new+user/signup"}>Sign up</Link>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center pb-4">
+                          
+                            <Link to={"/forgot+password"}>Forgot Password</Link>
                         </div>
 
                     </div>
